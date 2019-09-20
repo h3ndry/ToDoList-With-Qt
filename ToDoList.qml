@@ -1,5 +1,6 @@
 import QtQuick 2.12
 import QtQuick.Controls 2.5
+import ToDo 1.0
 
 Frame {
     ListView {
@@ -7,30 +8,20 @@ Frame {
         implicitHeight: 250
         clip: true
 
-        model: ListModel {
-            ListElement {
-                done: true
-                description: "Wash the car"
-            }
-            ListElement {
-                done: false
-                description: "Fix the sink"
-            }
-
-            ListElement {
-                done: false
-                description: "Organis bootsrap totorails"
-            }
-        }
+       model: ToDoModel {
+           list: ToDoList
+       }
 
         delegate: Row {
             width: parent.width
             CheckBox {
                 checked: model.done
+                onClicked: model.done = checked
             }
             TextField {
                 text: model.description
                 implicitWidth: parent.width
+                onEditingFinished: model.description = text
             }
 
         }
