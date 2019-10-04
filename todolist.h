@@ -13,7 +13,9 @@ class ToDoList : public QObject {
     Q_OBJECT
 public:
     explicit ToDoList(QObject *parent = nullptr);
+
     QVector <ToDoItem> items() const;
+
     bool setItemAt (int index, const ToDoItem &item);
 
 signals:

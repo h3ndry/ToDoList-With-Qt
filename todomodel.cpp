@@ -2,27 +2,28 @@
 #include "todolist.h"
 
 ToDoModel::ToDoModel(QObject *parent)
-    : QAbstractListModel(parent), mList(nullptr) {
+    : QAbstractListModel(parent),
+      mList(nullptr) {
 }
 
-int ToDoModel::rowCount(const QModelIndex &parent) const
-{
+int ToDoModel::rowCount(const QModelIndex &parent) const {
     // For list models only the root node (an invalid parent) should return the list's size. For all
     // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
     if (parent.isValid() || !mList)
         return 0;
 
     // FIXME: Implement me!
-    return mList->items().size();
+    return  mList->items().size();
 }
 
-QVariant ToDoModel::data(const QModelIndex &index, int role) const
-{
+QVariant ToDoModel::data(const QModelIndex &index, int role) const {
+
     if (!index.isValid() || !mList )
         return QVariant();
 
     // FIXME: Implement me!
     const ToDoItem item = mList->items().at(index.row());
+
     switch (role) {
     case doneRole:
         return QVariant(item.done);
@@ -33,6 +34,7 @@ QVariant ToDoModel::data(const QModelIndex &index, int role) const
 }
 
 bool ToDoModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+
     if (!mList) return  false;
 
     ToDoItem item = mList->items().at(index.row());
@@ -47,10 +49,10 @@ bool ToDoModel::setData(const QModelIndex &index, const QVariant &value, int rol
     }
 
     if (!mList->setItemAt(index.row(), item)) {
-        // FIXME: Implement me!
         emit dataChanged(index, index, QVector<int>() << role);
         return true;
     }
+
     return false;
 }
 
@@ -59,7 +61,7 @@ Qt::ItemFlags ToDoModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::NoItemFlags;
 
-    return Qt::ItemIsEditable; // FIXME: Implement me!
+    return Qt::ItemIsEditable;
 }
 
 QHash<int, QByteArray> ToDoModel::roleNames() const {
@@ -79,7 +81,7 @@ void ToDoModel::setList(ToDoList *list) {
 
     if (mList) mList->disconnect(this);
 
-    mList = list;
+        mList = list;
 
     if (mList) {
         connect(mList, &ToDoList::preItemAppended, this, [=]() {
@@ -95,7 +97,7 @@ void ToDoModel::setList(ToDoList *list) {
             beginRemoveRows(QModelIndex(), index, index);
         });
 
-        connect(mList, &ToDoList::preItemAppended, this, [=]() {
+        connect(mList, &ToDoList::postItemRemove, this, [=]() {
             endRemoveRows();
         });
     }
